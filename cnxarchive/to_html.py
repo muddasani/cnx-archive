@@ -20,7 +20,8 @@ import cnxarchive
 __all__ = (
     'transform_cnxml_to_html',
     'produce_html_for_module', 'produce_html_for_abstract',
-    'transform_abstract', 'transform_module_content',
+    'transform_abstract', 'transform_module_content', '_gen_xsl', 
+    'DEFAULT_XMLPARSER',
     )
 
 
