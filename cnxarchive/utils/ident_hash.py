@@ -164,18 +164,18 @@ class CNXHash(uuid.UUID):
                          cls._SHORT_HASH_LENGTH)
                     cls.base642uuid(hash_id)
                 except (TypeError, ValueError):
-                    raise IdentHashSyntaxError
+                    raise IdentHashSyntaxError(hash_id)
                 return cls.SHORTID
             elif len(hash_id) == cls._MAX_SHORT_HASH_LENGTH:
                 try:
                     cls.base642uuid(hash_id)
                 except (TypeError, ValueError):
-                    raise IdentHashSyntaxError
+                    raise IdentHashSyntaxError(hash_id)
                 return cls.BASE64HASH
             else:  # See if it's a string repr of a uuid
                 try:
                     cls.uuid2base64(hash_id)
                 except (TypeError, ValueError):
-                    raise IdentHashSyntaxError
+                    raise IdentHashSyntaxError(hash_id)
                 return cls.FULLUUID
-        raise IdentHashSyntaxError
+        raise IdentHashSyntaxError(hash_id)
