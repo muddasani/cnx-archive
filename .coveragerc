@@ -1,3 +1,5 @@
 [run]
 source =
     ./cnxarchive
+omit =
+    ./cnxarchive/scripts/export_epub/__main__.py
