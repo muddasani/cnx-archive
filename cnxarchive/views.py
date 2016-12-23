@@ -985,4 +985,9 @@ def robots(request):
 
 @view_config(route_name='error')
 def error(request):
+    logger.debug('dEbUg')
+    logger.info('InfO')
+    logger.warning('wArnIng')
+    logger.error('ErrOr')
+    logger.critical('crItIcAl')
     assert False
