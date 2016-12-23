@@ -981,3 +981,8 @@ def robots(request):
     resp.expires = html_date(exp_time)
     resp.body = robots_dot_txt.to_string()
     return resp
+
+
+@view_config(route_name='error')
+def error(request):
+    assert False
