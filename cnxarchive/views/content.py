@@ -153,6 +153,30 @@ def is_latest(id, version):
     return get_latest_version(id) == version
 
 
+def get_state(cursor, id, version):
+    """Determine the state of the content."""
+    version_split = version.split(".")
+    args = [id]
+    args.extend(version_split)
+
+    sql_statement = """
+    SELECT row_to_json(combined_rows) AS licenses
+    FROM (
+    SELECT m.stateid, ms.statename
+    FROM modules as m
+    JOIN modulestates as ms
+    ON m.stateid=ms.stateid
+    WHERE uuid=%s
+    AND major_version=%s
+    """
+    if len(version_split) == 2:
+        sql_statement += "AND minor_version=%s"
+    sql_statement += ") combined_rows;"
+
+    cursor.execute(sql_statement, args)
+    return cursor.fetchall()
+
+
 def get_export_allowable_types(cursor, exports_dirs, id, version):
     """Return export types."""
     request = get_current_request()
@@ -234,7 +258,6 @@ def get_extra(request):
     args = request.matchdict
     id, version = split_ident_hash(args['ident_hash'])
     results = {}
-
     with psycopg2.connect(settings[config.CONNECTION_STRING]) as db_connection:
         with db_connection.cursor() as cursor:
             results['downloads'] = \
@@ -242,6 +265,7 @@ def get_extra(request):
                                                 id, version))
             results['isLatest'] = is_latest(id, version)
             results['canPublish'] = get_module_can_publish(cursor, id)
+            results['state'] = get_state(cursor, id, version)
 
     resp = request.response
     resp.content_type = 'application/json'
