@@ -155,22 +155,17 @@ def is_latest(id, version):
 
 def get_state(cursor, id, version):
     """Determine the state of the content."""
-    version_split = version.split(".")
-    args = [id]
-    args.extend(version_split)
+    args = '@'.join((id, version))
 
     sql_statement = """
     SELECT ms.statename
     FROM modules as m
     JOIN modulestates as ms
     ON m.stateid=ms.stateid
-    WHERE uuid=%s
-    AND major_version=%s
+    WHERE ident_hash(uuid, major_version, minor_version) = %s
     """
-    if len(version_split) == 2:
-        sql_statement += "AND minor_version=%s"
 
-    cursor.execute(sql_statement, args)
+    cursor.execute(sql_statement, vars=(args,))
     res = cursor.fetchone()
     if res is None:
         return u'No Stateid in Modules table'
