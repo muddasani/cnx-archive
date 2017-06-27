@@ -160,9 +160,7 @@ def get_state(cursor, id, version):
     args.extend(version_split)
 
     sql_statement = """
-    SELECT row_to_json(combined_rows) AS licenses
-    FROM (
-    SELECT m.stateid, ms.statename
+    SELECT ms.statename
     FROM modules as m
     JOIN modulestates as ms
     ON m.stateid=ms.stateid
@@ -171,10 +169,13 @@ def get_state(cursor, id, version):
     """
     if len(version_split) == 2:
         sql_statement += "AND minor_version=%s"
-    sql_statement += ") combined_rows;"
 
     cursor.execute(sql_statement, args)
-    return cursor.fetchall()
+    res = cursor.fetchone()
+    if res is None:
+        return u'No Stateid in Modules table'
+    else:
+        return res[0]
 
 
 def get_export_allowable_types(cursor, exports_dirs, id, version):
